@@ -1,11 +1,13 @@
-import { GithubAuthProvider, GoogleAuthProvider, getAuth, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { GithubAuthProvider, GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import app from "../../Firebase/firebase.config";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 
 
 
 const Login = () => {
+
   const auth = getAuth(app);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -24,7 +26,7 @@ const Login = () => {
       .then((result) => {
         const user = result.user;
         if (user) {
-          setSuccess('Register Successfully')
+          setSuccess('LogIn Successfully')
         } else {
           setError('Already have a user')
         }
@@ -58,32 +60,8 @@ const Login = () => {
     console.log('Click from facebook auth')
   }
 
-  const handleLogIn = (event) => {
-    setSuccess('');
-    setError('');
-    event.preventDefault();
-
-    const from = event.target;
-    const email = from.email.value;
-    const password = from.password.value;
-
-    const auth = getAuth();
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-
-
-        const user = userCredential.user;
-        console.log(user);
-        setSuccess('login Successfull')
-
-
-
-      })
-      .catch((error) => {
-        setError("User dosen't exist")
-        const errorMessage = error.message;
-        console.log('login: ', errorMessage)
-      });
+  const handleLogIn = () => {
+   console.log('login pgae clicking.....')
   }
 
 
@@ -120,6 +98,8 @@ const Login = () => {
             <p className="text-green-500">{success}</p>
             <p className="text-red-400">{error}</p>
           </div>
+          <p className="text-center">Dont have an account? <Link className="btn btn-link ml-0 pl-0" to={"/register"}>Register</Link> </p>
+
         </form>
         <div className="mt-4">
           <p className="text-center text-gray-500">Or LogIn with</p>

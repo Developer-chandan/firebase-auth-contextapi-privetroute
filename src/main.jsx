@@ -1,6 +1,5 @@
-import React from 'react'
+
 import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
 import './index.css'
 import {
   createBrowserRouter,
@@ -12,6 +11,13 @@ import Home from './Compontent/Home/Home.jsx';
 import Login from './Compontent/Login/Login.jsx';
 import Register from './Compontent/Register/Register.jsx';
 import Products from './Compontent/Products/Products.jsx';
+import React from 'react';
+import AddContext from './provider/AddContext';
+
+
+
+
+
 
 const router = createBrowserRouter([
   {
@@ -40,6 +46,9 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-   <RouterProvider router={router} />
+  <AddContext>
+      <RouterProvider router={router} />
+      </AddContext>
+  
   </React.StrictMode>,
 )

@@ -1,13 +1,18 @@
 
 
-import { FacebookAuthProvider, GithubAuthProvider, GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, signInWithPopup } from "firebase/auth";
+import { FacebookAuthProvider, GithubAuthProvider, GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import app from "../../Firebase/firebase.config";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../provider/AddContext";
+import { Link } from "react-router-dom";
+
 
 
 
 
 const Register = () => {
+
+  const { handleRegister} = useContext(AuthContext);
 
   const auth = getAuth(app);
   const [error, setError] = useState('');
@@ -24,7 +29,6 @@ const Register = () => {
   
     signInWithPopup(auth, googleProvider)
       .then((result) => {
-
         // The signed-in user info.
         const user = result.user;
         console.log(user)
@@ -66,37 +70,45 @@ const Register = () => {
 
     })
   }
-const handleRegister = (event)=>{
-  setSuccess('');
-  setError('');
-  event.preventDefault();
   
-  const from = event.target;
-  const email = from.email.value;
-  const password = from.password.value;
-  const cpassword = from.passwordc.value;
-  createUserWithEmailAndPassword(auth, email, password, cpassword)
-  .then((userCredential) => {
-    // Signed up 
-    console.log(userCredential.user);
-    if(userCredential.user){
-      const user = userCredential.user;
-      console.log(user)
-      setSuccess('User Created Successfully')
-    }else if(userCredential.user.email == email){
-      setError('User Alreay Exist')
-    }
-    
-    // ...
-  }).catch(error => {
-    console.log(error.message)
-  })
+const handleSignUp = (event) => {
+event.preventDefault()
 
+setError('');
+setSuccess('');
+const form = event.target;
+const email = form.email.value;
+const password = form.password.value;
+const cpassword = form.passwordc.value;
+
+
+handleRegister(email, password)
+.then(result => {
+  console.log(result.user);
+  if(password !== cpassword){
+    setError('Password not same');
+    return;
+  }
   
 
+  const user = result.user;
 
+    setSuccess('Register Successfully')
+    form.reset();
+    console.log(user);
+
+})
+.catch(error=> {
+  setError(error.message);
+})
 
 }
+ 
+
+  
+
+
+
 
 
   return (
@@ -104,12 +116,12 @@ const handleRegister = (event)=>{
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
           <h2 className="text-2xl font-semibold text-center mb-4">Register</h2>
-          <form className="space-y-4" onSubmit={handleRegister}>
+          <form className="space-y-4" onSubmit={handleSignUp}>
             <div>
               <label htmlFor="email" className="block text-left text-sm font-medium text-gray-700">
                 Email
               </label>
-              <input
+              <input required
                 type="email"
                 id="email"
                 name="email"
@@ -121,7 +133,7 @@ const handleRegister = (event)=>{
               <label htmlFor="password" className="text-left block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <input
+              <input required
                 type="password"
                 id="password"
                 name="password"
@@ -133,7 +145,7 @@ const handleRegister = (event)=>{
               <label htmlFor="confirmPassword" className="text-left block text-sm font-medium text-gray-700">
                 Confirm Password
               </label>
-              <input
+              <input required
                 type="password"
                 name="passwordc"
                 id="confirmPassword"
@@ -151,13 +163,15 @@ const handleRegister = (event)=>{
             </div>
             <div className='error'>
           
-              <p>{success}</p>
-              <p>{error}</p>
+              <p className="text-center text-green-500">{success}</p>
+              <p className="text-center text-red-400">{error}</p>
 
             </div>
+
+            <p className="text-center">Already registered?<Link className="btn btn-link ml-0 pl-0" to={"/login"}>LogIn</Link> </p>
           </form>
           <div className="mt-4">
-            <p className="text-center text-gray-500">Or LogIn with</p>
+            <p className="text-center text-gray-500">Or Register with</p>
             <div className="flex justify-center mt-2 space-x-2">
               <button onClick={handleGoogleSignUp} className=" text-white p-2   transition duration-300">
                 <img className="w-[50px] h-[50px] rounded-full" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnw_uBqjQDj4hLr5NRakpD2MOlqALQZHVNrxnsk3jZbKF8Ltd9aTU1OAeW_RaQSUvXoM8&usqp=CAU" alt="" />
